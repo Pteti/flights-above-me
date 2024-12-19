@@ -27,3 +27,9 @@ Flip first and third, to:
 ```
 
 Use this location in `index.html?bounds=<location>`
+
+# Usage
+
+Take index.html and deploy it to your favorite static HTML hosting. For example, you can use free Cloudflare Pages. You can download a .zip from github, upload it to Cloudflare Pages. 
+
+Once you have a URL, you request the URL like this: `https://...URL.../index.html?bounds=<bbox bounds>&corskey=<apikey>` where bounds is the location above and corskey is optional API Key to corsproxy.io
