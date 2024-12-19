@@ -1,7 +1,7 @@
 # flights-above-me
 Displays a flight directly above you in a fancy display.
 
-Inspired by https://github.com/smartbutnot/flightportal but uses just Javascript + Browser
+Inspired by https://github.com/smartbutnot/flightportal but uses just Javascript + Browser. Uses flightradar24 free API + corsproxy.io
 
 <img width="1498" alt="image" src="https://github.com/user-attachments/assets/530403ef-e8b5-4223-b4aa-0241255c933e" />
 
