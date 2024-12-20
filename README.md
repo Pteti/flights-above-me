@@ -13,20 +13,16 @@ Because flightradar24 has CORS headers you need a CORS proxy. This uses https://
 
 # Location
 
-By default this shows flights above London. Go to https://bboxfinder.com if you want to find your own box. Remember that the format bbox uses is a bit different. In the coordinates format choose Lat/Long and then flip them further. For example:
+By default this shows flights above London. Go to https://bboxfinder.com if you want to find your own box. Remember that the format bbox uses is a bit different. In the coordinates format choose Lat/Long and bbox will give you coordinates in the south,west,north,east format.
 
-If the coordinates from bbox finder are:
-
+For example:
 ```
-Box 35.317366,-81.035156,42.423457,-65.039063
-```
-
-Flip first and third, to:
-```
-35.317366,42.423457,-81.035156,-65.039063
+35.317366,-81.035156,42.423457,-65.039063
 ```
 
 Use this location in `index.html?bounds=<location>`
+
+(The page will automatically flip the numbers to north,south,west,east format that FlightRadar24 expects.
 
 # Usage
 

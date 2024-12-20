@@ -108,7 +108,11 @@
               const urlParams = new URLSearchParams(window.location.search);
 
               // Get bounds from URL or use default
-              const bounds = urlParams.get('bounds') || '51.6,51.4,-0.3,-0.1';
+
+              const parts = urlParams.get('bounds')?.split(',').map(Number);
+              const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
+
+              console.log(bounds);
               const corskey = urlParams.get('corskey');
 
 
