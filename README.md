@@ -5,7 +5,7 @@ Inspired by https://github.com/smartbutnot/flightportal but uses just Javascript
 
 Has basic PWA support for iOS, so if you open this on an iPad, you can tab Add to Home Screen and it will become a fancy display.
 
-<img width="1498" alt="image" src="https://github.com/user-attachments/assets/530403ef-e8b5-4223-b4aa-0241255c933e" />
+![Untitled design (11)](https://github.com/user-attachments/assets/1ffeea03-886f-4667-9767-490fbdec038b)
 
 # CORS Proxy
 
