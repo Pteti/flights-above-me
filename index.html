@@ -4,21 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <!-- Auto refresh -->
-    <meta http-equiv="refresh" content="60">
+      <!-- Auto refresh once an hour just to load new HTML in case it changed during a deployment -->
+    <meta http-equiv="refresh" content="3600">
 
-    <!-- iOS PWA meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Flight Board">
-
-    <!-- PWA icons for iOS -->
     <link rel="apple-touch-icon" href="/api/placeholder/180/180">
     <link rel="apple-touch-icon" sizes="152x152" href="/api/placeholder/152/152">
     <link rel="apple-touch-icon" sizes="180x180" href="/api/placeholder/180/180">
     <link rel="apple-touch-icon" sizes="167x167" href="/api/placeholder/167/167">
-
-    <!-- PWA splash screens for iOS -->
     <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1290/2796">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1179/2556">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1284/2778">
@@ -110,6 +105,7 @@
               // Get bounds from URL or use default
 
               const parts = urlParams.get('bounds')?.split(',').map(Number);
+              // The default is Greater London
               const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
 
               console.log(bounds);
@@ -159,9 +155,7 @@
 
         // Initial fetch
         fetchAndDisplayFlightData();
-
-        // Refresh every 30 seconds
-        setInterval(fetchAndDisplayFlightData, 30000);
+        setInterval(fetchAndDisplayFlightData, 60000);
     </script>
 </body>
 </html>
