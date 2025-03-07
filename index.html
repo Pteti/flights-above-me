@@ -29,9 +29,9 @@
     margin: 0;
     padding: 0;
     background-color: black;
-    height: 100vh;
+    height: 100vh; 
     width: 100vw;
-    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-y: auto; /* Enable scrolling */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,13 +40,20 @@
 
 .display-container {
     width: 100%;
+    min-height: 100vh; /* Ensure content can grow */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items to the top */
+    justify-content: flex-start; /* Align to top */
     gap: 2vh;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.flight-info {
+    width: 90%;
+    text-align: center;
+    padding: 10px 0;
 }
 
         .led-text {
