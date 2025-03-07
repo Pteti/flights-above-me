@@ -133,7 +133,7 @@
                 //let corsProxyUrl = 'https://corsproxy.io/';
                 //corsProxyUrl += corskey ? `?corskey=${corskey}&` : '?';
 
-                const feedUrl = corsProxyUrl + `url=${encodeURIComponent(`${baseUrl}&${otherParams}`)}`;
+                const feedUrl = corsProxyUrl + `${encodeURIComponent(`${baseUrl}&${otherParams}`)}`;
                 const feedResponse = await axios.get(feedUrl);
                 const feedData = feedResponse.data;
 
