@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <!-- Auto refresh once an hour just to load new HTML in case it changed during a deployment -->
-    <meta http-equiv="refresh" content="3600">
+    <meta http-equiv="refresh" content="20">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -106,7 +106,7 @@
 
               const parts = urlParams.get('bounds')?.split(',').map(Number);
               // The default is Greater London
-              const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
+              const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '19.0,47.4,19.1,47.5';
 
               console.log(bounds);
               const corskey = urlParams.get('corskey');
@@ -155,7 +155,7 @@
 
         // Initial fetch
         fetchAndDisplayFlightData();
-        setInterval(fetchAndDisplayFlightData, 60000);
+        setInterval(fetchAndDisplayFlightData, 20);
     </script>
 </body>
 </html>
