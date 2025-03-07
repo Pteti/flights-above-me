@@ -111,7 +111,7 @@
                 const corskey = urlParams.get('corskey');
                 
                 const baseUrl = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=' + bounds;
-                const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=5&webpriv=0';
+                const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=2&webpriv=0';
                 
                 let corsProxyUrl = 'https://corsproxy.io/';
                 corsProxyUrl += corskey ? `?corskey=${corskey}&` : '?';
@@ -119,6 +119,8 @@
                 const feedUrl = corsProxyUrl + `url=${encodeURIComponent(`${baseUrl}&${otherParams}`)}`;
                 const feedResponse = await axios.get(feedUrl);
                 const feedData = feedResponse.data;
+                
+                console.log(feedResponse);
                 
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
                 if (!flightKeys.length) throw new Error('No flight data found');
