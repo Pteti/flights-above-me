@@ -17,7 +17,7 @@
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZsaWdodCBCb2FyZCIsCiAgInNob3J0X25hbWUiOiAiRmxpZ2h0IEJvYXJkIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIgp9">
     <title>Flight LED Display</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
-    <style>
+        <style>
         body {
             margin: 0;
             padding: 0;
@@ -30,7 +30,7 @@
             align-items: center;
             font-family: monospace;
         }
-
+    
         .display-container {
             width: 100%;
             min-height: 100vh; /* Ensure content can grow */
@@ -42,13 +42,13 @@
             padding: 20px;
             box-sizing: border-box;
         }
-
+    
         .flight-info {
             width: 90%;
             text-align: center;
             padding: 10px 0;
         }
-
+    
         .led-text {
             text-align: center;
             white-space: nowrap;
@@ -56,41 +56,54 @@
             text-shadow: 0 0 10px currentColor;
             font-weight: bold;
             width: 100%;
+            overflow: hidden; /* Prevent text from overflowing */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+            display: inline-block; /* Ensure it doesn't break layout */
+            max-width: 100%; /* Ensure it fits in the container */
         }
-
+    
         #registration, #route {
             color: rgb(100, 149, 237);
         }
-
+    
         #aircraft {
             color: rgb(255, 223, 0);
         }
-
+    
         #airline {
-            color: rgb(255, 165, 0);
+            color: white; /* Default color for airline */
+            font-size: 5vw; /* Reduce font size for airline to fit in the page */
         }
-
+    
         /* Laptop (1366x768 and up) */
         @media (min-width: 1366px) {
             .led-text {
                 font-size: 15vw;
             }
+            #airline {
+                font-size: 4vw; /* Make airline font smaller */
+            }
         }
-
+    
         /* iPad in landscape (1024x768) */
         @media (min-width: 1024px) and (max-width: 1365px) {
             .led-text {
-                font-size: 15vw;
+                font-size: 12vw;
+            }
+            #airline {
+                font-size: 3vw; /* Smaller for smaller screens */
             }
         }
-
+    
         /* iPhone and similar (up to 1023px) */
         @media (max-width: 1023px) {
             .led-text {
-                font-size: 15vw;
+                font-size: 12vw;
+            }
+            #airline {
+                font-size: 3.5vw; /* Further reduce size for smaller screens */
             }
         }
-
     </style>
 </head>
 <body>
@@ -99,6 +112,14 @@
         <div id="route" class="led-text">...</div>
         <div id="aircraft" class="led-text">...</div>
         <div id="airline" class="led-text">...</div>
+    </div>
+
+    <div class="flight-info">
+        <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
+        <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
+        <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
+        <div class="led-text" style="color: ${airlineColor || 'white'}" id="airline">${airlineName}</div> <!-- Airline with dynamic color (defaults to white) -->
+        <hr style="width: 80%; border: 0.5px solid gray">
     </div>
 
     <script>
@@ -141,23 +162,20 @@
                     const detailsResponse = await axios.get(detailsUrl);
                     const data = detailsResponse.data;
 
-                    // Get the airline name
-                    const airlineName = data.airline.name || 'Unknown Airline';
-                    
-                    // Get the airline base color from the map
-                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
-                    
+                   const airlineName = data.airline.name || 'N/A';
+                   const airlineColor = getAirlineColor(airlineName); // Use your existing logic for color extraction
+
+                    // Ensure this gets applied when creating each flight div
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
                         <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
-                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
+                        <div class="led-text" style="color: ${airlineColor || 'white'}" id="airline">${airlineName}</div>
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
                     displayContainer.appendChild(flightDiv);
-                }
             } catch (error) {
                 console.error('Error fetching flight data:', error);
             }
