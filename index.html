@@ -36,6 +36,7 @@
     flex-direction: column;
     align-items: center;
     font-family: monospace;
+    scroll-behavior: smooth; /* Smooth scrolling */
 }
 
 .display-container {
@@ -149,6 +150,22 @@
     
     fetchAndDisplayFlightData();
     setInterval(fetchAndDisplayFlightData, 60000);
+
+    // Function to slowly scroll the page down
+    function slowScroll() {
+    const scrollDistance = 1; // Adjust this for more or less scroll speed
+    const scrollInterval = 20; // Time in ms between each scroll step
+
+    window.scrollBy(0, scrollDistance);
+
+    // Keep scrolling at this interval
+    setTimeout(slowScroll, scrollInterval);
+}
+
+// Start the slow scrolling when the page loads
+window.onload = function() {
+    slowScroll();
+};
 </script>
 </body>
 </html>
