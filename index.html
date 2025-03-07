@@ -1,4 +1,3 @@
-<!-- Inspired by https://github.com/smartbutnot/flightportal/tree/main -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,6 +102,16 @@
     </div>
 
     <script>
+        // Define a mapping of airlines to their base colors
+        const airlineColors = {
+            "American Airlines": "#A50000",
+            "Delta Airlines": "#0077B5",
+            "United Airlines": "#0061B2",
+            "Emirates": "#D50032",
+            "Lufthansa": "#FFCC00",
+            // Add more airlines and their colors as needed
+        };
+
         async function fetchAndDisplayFlightData() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -111,7 +120,7 @@
                 const corskey = urlParams.get('corskey');
                 
                 const baseUrl = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=' + bounds;
-                const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=2&webpriv=0';
+                const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=5&webpriv=0';
                 
                 let corsProxyUrl = 'https://corsproxy.io/';
                 corsProxyUrl += corskey ? `?corskey=${corskey}&` : '?';
@@ -130,6 +139,12 @@
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
                     const data = detailsResponse.data;
+
+                    // Get the airline name
+                    const airlineName = data.airline.name || 'Unknown Airline';
+                    
+                    // Get the airline base color from the map
+                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
                     
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
@@ -137,7 +152,7 @@
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
                         <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
-                        <div class="led-text" style="color: rgb(255, 165, 0)">${data.airline.name || 'N/A'}</div> <!-- Display the airline -->
+                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
                     displayContainer.appendChild(flightDiv);
