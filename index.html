@@ -106,7 +106,7 @@
 
               const parts = urlParams.get('bounds')?.split(',').map(Number);
               // The default is Greater London
-              const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '19.0,47.4,19.1,47.5';
+              const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
 
               console.log(bounds);
               const corskey = urlParams.get('corskey');
