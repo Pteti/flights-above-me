@@ -67,7 +67,8 @@
             top: -50px; /* Start off-screen */
             font-size: 3rem; /* Plane icon size */
             z-index: 10; /* Make sure it's above other elements */
-            animation: flyDown 10s linear infinite; /* Infinite animation */
+            animation: flyDown 5s linear forwards; /* Shorter animation duration */
+            visibility: hidden; /* Hide initially */
         }
 
         @keyframes flyDown {
@@ -162,7 +163,14 @@
                     displayContainer.appendChild(flightDiv);
                 }
 
-                // Move to the next flight after the plane animation completes
+                // Start plane animation after 5 seconds
+                setTimeout(() => {
+                    const plane = document.getElementById("plane");
+                    plane.style.visibility = "visible"; // Make plane visible
+                    plane.style.animation = "flyDown 5s linear forwards"; // Trigger the animation
+                }, 5000); // Wait 5 seconds
+
+                // Refresh data after the plane finishes flying down
                 setTimeout(() => {
                     if (currentFlightIndex < flightData.length - 1) {
                         currentFlightIndex++;
@@ -170,7 +178,7 @@
                         currentFlightIndex = 0; // Reset index
                     }
                     fetchAndDisplayFlightData(); // Fetch next set of data
-                }, 10000); // Refresh data every 10 seconds
+                }, 10000); // Refresh data every 10 seconds (after animation finishes)
 
             } catch (error) {
                 console.error('Error fetching flight data:', error);
