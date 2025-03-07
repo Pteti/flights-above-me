@@ -144,7 +144,7 @@
                 displayContainer.innerHTML = ''; // Clear previous entries
 
                 for (const flightKey of flightKeys) {
-                    const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
+                    const detailsUrl = corsProxyUrl + `https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
                     const data = detailsResponse.data;
 
