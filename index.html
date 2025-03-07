@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Auto refresh once an hour just to load new HTML in case it changed during a deployment -->
     <meta http-equiv="refresh" content="3600">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Flight Board">
@@ -17,10 +15,7 @@
     <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1290/2796">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1179/2556">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1284/2778">
-
-    <!-- Web app manifest -->
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZsaWdodCBCb2FyZCIsCiAgInNob3J0X25hbWUiOiAiRmxpZ2h0IEJvYXJkIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIgp9">
-
     <title>Flight LED Display</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
     <style>
@@ -72,6 +67,10 @@
             color: rgb(255, 223, 0);
         }
 
+        #airline {
+            color: rgb(255, 165, 0);
+        }
+
         /* Laptop (1366x768 and up) */
         @media (min-width: 1366px) {
             .led-text {
@@ -100,6 +99,7 @@
         <div id="registration" class="led-text">...</div>
         <div id="route" class="led-text">...</div>
         <div id="aircraft" class="led-text">...</div>
+        <div id="airline" class="led-text">...</div>
     </div>
 
     <script>
@@ -129,7 +129,6 @@
                 for (const flightKey of flightKeys) {
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
-                    console.log(detailsResponse);
                     const data = detailsResponse.data;
                     
                     const flightDiv = document.createElement('div');
@@ -138,6 +137,7 @@
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
                         <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
+                        <div class="led-text" style="color: rgb(255, 165, 0)">${data.airline.name || 'N/A'}</div> <!-- Display the airline -->
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
                     displayContainer.appendChild(flightDiv);
@@ -169,7 +169,7 @@
             }
 
             // Start the jump process with a delay (e.g., 3 seconds between each jump)
-            setInterval(jumpToNextFlight, 7000);
+            setInterval(jumpToNextFlight, 3000);
         }
 
         displayFlightsWithJump();
