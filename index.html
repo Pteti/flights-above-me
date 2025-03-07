@@ -120,8 +120,6 @@
                 const feedResponse = await axios.get(feedUrl);
                 const feedData = feedResponse.data;
                 
-                console.log(feedResponse);
-                
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
                 if (!flightKeys.length) throw new Error('No flight data found');
                 
@@ -131,6 +129,7 @@
                 for (const flightKey of flightKeys) {
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
+                    console.log(detailsResponse);
                     const data = detailsResponse.data;
                     
                     const flightDiv = document.createElement('div');
