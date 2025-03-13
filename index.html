@@ -140,6 +140,10 @@
                     const airlineName = data.airline?.name || 'Unknown Airline';
                     const originCode = data.airport.origin?.code || 'Unknown Airport';
                     const destinationCode = data.airport.destination?.code || 'Unknown Airport';
+
+                    //0: lat: 47.452057, lng: 19.215637, alt: 2000, spd: 155, ts: 1741869706
+                    // check if its right above, and let user know!
+                    // maybe display speed and alt for planes
                     
                     // Get the airline base color from the map
                     const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
