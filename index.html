@@ -14,6 +14,7 @@
     <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1290/2796">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1179/2556">
     <link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/api/placeholder/1284/2778">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZsaWdodCBCb2FyZCIsCiAgInNob3J0X25hbWUiOiAiRmxpZ2h0IEJvYXJkIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIgp9">
     <title>Flight LED Display</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
     <style>
@@ -23,21 +24,20 @@
             background-color: black;
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Hide scrolling */
+            overflow-y: hidden; /* Hide scrolling */
             display: flex;
             flex-direction: column;
             align-items: center;
             font-family: monospace;
-            position: relative; /* Allow for absolute positioning of the plane */
         }
 
         .display-container {
             width: 100%;
-            min-height: 100vh;
+            min-height: 100vh; /* Ensure content can grow */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: flex-start; /* Align to top */
             gap: 2vh;
             padding: 20px;
             box-sizing: border-box;
@@ -56,54 +56,44 @@
             text-shadow: 0 0 10px currentColor;
             font-weight: bold;
             width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            max-width: 100%;
         }
 
-        #plane {
-            position: absolute;
-            top: -50px; /* Start off-screen */
-            font-size: 3rem; /* Plane icon size */
-            z-index: 10; /* Make sure it's above other elements */
-            animation: flyDown 5s linear forwards; /* Shorter animation duration */
-            visibility: hidden; /* Hide initially */
+        #registration, #route {
+            color: rgb(100, 149, 237);
         }
 
-        @keyframes flyDown {
-            0% {
-                top: -50px; /* Start at the top */
-            }
-            100% {
-                top: 100vh; /* End at the bottom */
-            }
+        #aircraft {
+            color: rgb(255, 223, 0);
         }
 
-        /* Laptop and larger screens */
+        #airline {
+            color: rgb(255, 165, 0);
+        }
+
+        /* Laptop (1366x768 and up) */
         @media (min-width: 1366px) {
             .led-text {
                 font-size: 15vw;
             }
         }
 
-        /* iPad in landscape */
+        /* iPad in landscape (1024x768) */
         @media (min-width: 1024px) and (max-width: 1365px) {
             .led-text {
-                font-size: 12vw;
+                font-size: 15vw;
             }
         }
 
-        /* iPhone and similar */
+        /* iPhone and similar (up to 1023px) */
         @media (max-width: 1023px) {
             .led-text {
-                font-size: 12vw;
+                font-size: 15vw;
             }
         }
+
     </style>
 </head>
 <body>
-
     <div class="display-container">
         <div id="registration" class="led-text">...</div>
         <div id="route" class="led-text">...</div>
@@ -111,11 +101,16 @@
         <div id="airline" class="led-text">...</div>
     </div>
 
-    <div id="plane">✈️</div> <!-- Small plane pictogram -->
-
     <script>
-        let currentFlightIndex = 0; // Index to track the current flight
-        let flightData = []; // Store flight data to avoid frequent fetching
+        // Define a mapping of airlines to their base colors
+        const airlineColors = {
+            "American Airlines": "#A50000",
+            "Delta Airlines": "#0077B5",
+            "United Airlines": "#0061B2",
+            "Emirates": "#D50032",
+            "Lufthansa": "#FFCC00",
+            // Add more airlines and their colors as needed
+        };
 
         async function fetchAndDisplayFlightData() {
             try {
@@ -123,74 +118,76 @@
                 const parts = urlParams.get('bounds')?.split(',').map(Number);
                 const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
                 const corskey = urlParams.get('corskey');
-
+                
                 const baseUrl = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=' + bounds;
                 const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=5&webpriv=0';
-
+                
                 let corsProxyUrl = 'https://corsproxy.io/';
                 corsProxyUrl += corskey ? `?corskey=${corskey}&` : '?';
-
+                
                 const feedUrl = corsProxyUrl + `url=${encodeURIComponent(`${baseUrl}&${otherParams}`)}`;
                 const feedResponse = await axios.get(feedUrl);
                 const feedData = feedResponse.data;
-
+                
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
                 if (!flightKeys.length) throw new Error('No flight data found');
-
-                flightData = []; // Clear previous flight data
+                
                 const displayContainer = document.querySelector('.display-container');
-                displayContainer.innerHTML = ''; // Clear previous flight info
-
+                displayContainer.innerHTML = ''; // Clear previous entries
+                
                 for (const flightKey of flightKeys) {
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
                     const data = detailsResponse.data;
 
-                    flightData.push(data); // Store the fetched data for later
-
-                    const airlineName = data.airline?.name || 'N/A';
-                    const airlineColor = getAirlineColor(airlineName);
-
+                    // Get the airline name
+                    const airlineName = data.airline.name || 'Unknown Airline';
+                    
+                    // Get the airline base color from the map
+                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
+                    
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
                         <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
-                        <div class="led-text" style="color: ${airlineColor || 'white'}" id="airline">${airlineName}</div>
+                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
                     displayContainer.appendChild(flightDiv);
                 }
-
-                // Start plane animation after 5 seconds
-                setTimeout(() => {
-                    const plane = document.getElementById("plane");
-                    plane.style.visibility = "visible"; // Make plane visible
-                    plane.style.animation = "flyDown 5s linear forwards"; // Trigger the animation
-                }, 5000); // Wait 5 seconds
-
-                // Refresh data after the plane finishes flying down
-                setTimeout(() => {
-                    if (currentFlightIndex < flightData.length - 1) {
-                        currentFlightIndex++;
-                    } else {
-                        currentFlightIndex = 0; // Reset index
-                    }
-                    fetchAndDisplayFlightData(); // Fetch next set of data
-                }, 10000); // Refresh data every 10 seconds (after animation finishes)
-
             } catch (error) {
                 console.error('Error fetching flight data:', error);
             }
         }
 
-        function getAirlineColor(airlineName) {
-            // Add logic for specific airline colors if needed
-            return ''; // Return empty for default color
+        async function displayFlightsWithJump() {
+            // Fetch flight data
+            await fetchAndDisplayFlightData();
+            const flightInfos = document.querySelectorAll('.flight-info');
+            let index = 0;
+
+            // Function to jump to the next flight info after a few seconds
+            function jumpToNextFlight() {
+                if (index < flightInfos.length) {
+                    // Make the current flight info visible
+                    flightInfos[index].style.display = 'block';
+                    // Hide the previous flight info
+                    if (index > 0) {
+                        flightInfos[index - 1].style.display = 'none';
+                    }
+                    index++;
+                } else {
+                    index = 0; // Reset to first flight info if at the end
+                }
+            }
+
+            // Start the jump process with a delay (e.g., 3 seconds between each jump)
+            setInterval(jumpToNextFlight, 3000);
         }
 
-        fetchAndDisplayFlightData(); // Initial fetch of flight data
+        displayFlightsWithJump();
     </script>
 </body>
 </html>
