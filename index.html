@@ -138,6 +138,8 @@
 
                     // Get the airline name
                     const airlineName = data.airline?.name || 'Unknown Airline';
+                    const originCode = data.airport.origin?.code || 'Unknown Airport';
+                    const destinationCode = data.airport.destination?.code || 'Unknown Airport';
                     
                     // Get the airline base color from the map
                     const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
@@ -147,7 +149,7 @@
                     flightDiv.innerHTML = `
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.callsign || 'N/A'}</div>
                         <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
-                        <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
+                        <div class="led-text" style="color: white">${originCode.iata}-${destinationCode.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.text || 'N/A'}</div>
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
