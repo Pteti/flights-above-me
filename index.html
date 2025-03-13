@@ -140,6 +140,7 @@
                 for (const flightKey of flightKeys) {
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
+                    console.log(detailsResponse);
                     const data = detailsResponse.data;
 
                     // Get the airline name
@@ -152,9 +153,9 @@
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
                         <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
+                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
-                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <hr style="width: 80%; border: 0.5px solid gray">
                     `;
                     displayContainer.appendChild(flightDiv);
