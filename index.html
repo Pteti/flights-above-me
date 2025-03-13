@@ -24,74 +24,41 @@
             background-color: black;
             height: 100vh;
             width: 100vw;
-            overflow-y: hidden; /* Hide scrolling */
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             font-family: monospace;
         }
-
+        
         .display-container {
             width: 100%;
-            min-height: 100vh; /* Ensure content can grow */
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Align to top */
-            gap: 2vh;
-            padding: 20px;
+            justify-content: space-evenly; /* Distribute space evenly */
+            padding: 2vh;
             box-sizing: border-box;
         }
-
-        .flight-info {
-            width: 90%;
-            text-align: center;
-            padding: 10px 0;
-        }
-
+        
         .led-text {
             text-align: center;
             white-space: nowrap;
             letter-spacing: 0.1em;
-            text-shadow: 0 0 10px currentColor;
+            text-shadow: 0 0 1vw currentColor;
             font-weight: bold;
             width: 100%;
         }
-
-        #registration, #route {
-            color: rgb(100, 149, 237);
+        
+        #registration { color: rgb(100, 149, 237); }
+        #aircraft { color: rgb(255, 223, 0); }
+        #route { color: white; }
+        #airline { color: rgb(255, 165, 0); }
+        
+        /* Dynamic Font Sizing */
+        .led-text {
+            font-size: min(10vh, 10vw); /* Scale dynamically */
         }
-
-        #aircraft {
-            color: rgb(255, 223, 0);
-        }
-
-        #airline {
-            color: white; /* Default color for airline */
-            font-size: 5vw;
-        }
-
-        /* Laptop (1366x768 and up) */
-        @media (min-width: 1366px) {
-            .led-text {
-                font-size: 5vw;
-            }
-        }
-
-        /* iPad in landscape (1024x768) */
-        @media (min-width: 1024px) and (max-width: 1365px) {
-            .led-text {
-                font-size: 5vw;
-            }
-        }
-
-        /* iPhone and similar (up to 1023px) */
-        @media (max-width: 1023px) {
-            .led-text {
-                font-size: 5vw;
-            }
-        }
-
     </style>
 </head>
 <body>
