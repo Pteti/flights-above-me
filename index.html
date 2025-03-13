@@ -137,7 +137,7 @@
                     const data = detailsResponse.data;
 
                     // Get the airline name
-                    const airlineName = data.airline.name || 'Unknown Airline';
+                    const airlineName = data.airline?.name || 'Unknown Airline';
                     
                     // Get the airline base color from the map
                     const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
