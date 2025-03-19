@@ -188,6 +188,8 @@
                     let isAboveYou = distance !== null && distance <= 1; // Check if within 1km
         
                     const airlineName = data.airline?.name || 'Unknown Airline';
+                    // Get the airline base color from the map
+                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
         
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
