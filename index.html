@@ -159,6 +159,8 @@
         
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
                 if (!flightKeys.length) throw new Error('No flight data found');
+
+                const currentTime = Math.floor(Date.now() / 1000); // Get current UNIX timestamp in seconds
         
                 const displayContainer = document.querySelector('.display-container');
                 displayContainer.innerHTML = ''; // Clear previous entries
@@ -167,7 +169,13 @@
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
                     const data = detailsResponse.data;
-        
+
+                    // Ignore flights older than 60 seconds
+                    if (!data.time || currentTime - data.time > 60) {
+                        console.warn(`Ignoring old flight ${flightKey} (age: ${currentTime - data.time}s)`);
+                        continue;
+                    }
+                    
                     // Extract plane location (latest trail data)
                     const planeLocation = data.trail?.[0] || null;
                     const myLat = 47.471863, myLng = 19.079758;
