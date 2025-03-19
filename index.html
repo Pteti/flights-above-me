@@ -28,7 +28,6 @@
             justify-content: center;
             align-items: center;
             font-family: monospace;
-            overflow: hidden; /* Hides scrollbar */
         }
         
         .display-container {
@@ -37,7 +36,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Center single flight */
+            justify-content: space-evenly; /* Distribute space evenly */
             padding: 2vh;
             box-sizing: border-box;
         }
@@ -49,33 +48,16 @@
             text-shadow: 0 0 1vw currentColor;
             font-weight: bold;
             width: 100%;
-            font-size: min(10vh, 10vw);
         }
         
-        /* Hide all flight info initially */
-        .flight-info {
-            display: none;
-        }
+        #registration { color: rgb(100, 149, 237); }
+        #aircraft { color: rgb(255, 223, 0); }
+        #route { color: white; }
+        #airline { color: rgb(255, 165, 0); }
         
-        /* Show only the active flight */
-        .flight-info.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .alert {
-            font-size: 5vw;
-            color: red;
-            font-weight: bold;
-            text-shadow: 0 0 10px red;
-            margin-top: 10px;
-        }
-        
-        @keyframes blink {
-            from { opacity: 1; }
-            to { opacity: 0.3; }
+        /* Dynamic Font Sizing */
+        .led-text {
+            font-size: min(10vh, 10vw); /* Scale dynamically */
         }
     </style>
 </head>
@@ -125,73 +107,47 @@
             "Wizz Air": "#BA2589" // Purple
         };
 
-        function haversine(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in km
-            const toRad = (deg) => deg * (Math.PI / 180);
-        
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-        
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distance in km
-        }
-        
-        let isFetching = false; // Prevent multiple requests from overlapping
-        
         async function fetchAndDisplayFlightData() {
-            if (isFetching) return; // Skip if a fetch is already in progress
-            isFetching = true; // Lock the function
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const parts = urlParams.get('bounds')?.split(',').map(Number);
                 const bounds = parts ? [parts[0], parts[2], parts[1], parts[3]].join(',') : '51.6,51.4,-0.3,-0.1';
                 const corskey = urlParams.get('corskey');
-        
+                
                 const baseUrl = 'https://data-cloud.flightradar24.com/zones/fcgi/feed.js?bounds=' + bounds;
                 const otherParams = 'faa=1&satellite=1&mlat=1&flarm=1&adsb=1&gnd=0&air=1&vehicles=0&estimated=0&maxage=14400&gliders=0&stats=0&ems=1&limit=5&webpriv=0';
-        
+                
                 let corsProxyUrl = 'https://corsproxy.io/';
                 corsProxyUrl += corskey ? `?corskey=${corskey}&` : '?';
-        
+                
                 const feedUrl = corsProxyUrl + `url=${encodeURIComponent(`${baseUrl}&${otherParams}`)}`;
                 const feedResponse = await axios.get(feedUrl);
                 const feedData = feedResponse.data;
-        
+                
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
                 if (!flightKeys.length) throw new Error('No flight data found');
-
-                const currentTime = Math.floor(Date.now() / 1000); // Get current UNIX timestamp in seconds
-        
+                
                 const displayContainer = document.querySelector('.display-container');
                 displayContainer.innerHTML = ''; // Clear previous entries
-        
+                
                 for (const flightKey of flightKeys) {
                     const detailsUrl = corsProxyUrl + `url=https://data-live.flightradar24.com/clickhandler/?flight=${flightKey}`;
                     const detailsResponse = await axios.get(detailsUrl);
+                    console.log(detailsResponse);
                     const data = detailsResponse.data;
 
-                    // Ignore flights older than 60 seconds
-                    if (!data.time || currentTime - data.time > 60) {
-                        console.warn(`Ignoring old flight ${flightKey} (age: ${currentTime - data.time}s)`);
-                        continue;
-                    }
-                    
-                    // Extract plane location (latest trail data)
-                    const planeLocation = data.trail?.[0] || null;
-                    const myLat = 47.471863, myLng = 19.079758;
-        
-                    let distance = planeLocation ? haversine(myLat, myLng, planeLocation.lat, planeLocation.lng) : null;
-                    let isAboveYou = distance !== null && distance <= 1; // Check if within 1km
-        
+                    // Get the airline name
                     const airlineName = data.airline?.name || 'Unknown Airline';
-                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
                     const originCode = data.airport.origin?.code || 'Unknown Airport';
                     const destinationCode = data.airport.destination?.code || 'Unknown Airport';
-        
+
+                    //0: lat: 47.452057, lng: 19.215637, alt: 2000, spd: 155, ts: 1741869706
+                    // check if its right above, and let user know!
+                    // maybe display speed and alt for planes
+                    
+                    // Get the airline base color from the map
+                    const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
+                    
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
@@ -199,45 +155,38 @@
                         <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <div class="led-text" style="color: white">${originCode.iata}-${destinationCode.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.text || 'N/A'}</div>
-                        ${isAboveYou ? `<div class="alert">✈️ Plane is right above! 🚀</div>` : ""}
+                        <hr style="width: 80%; border: 0.5px solid gray">
                     `;
-        
-                    if (isAboveYou) {
-                        flightDiv.style.animation = "blink 0.5s infinite alternate";
-                    }
-        
                     displayContainer.appendChild(flightDiv);
                 }
             } catch (error) {
                 console.error('Error fetching flight data:', error);
-            } finally {
-                isFetching = false; // Unlock the function
-                setTimeout(fetchAndDisplayFlightData, 14000); // Try again in 10s
             }
         }
-        
-        // Run immediately on page load
-        fetchAndDisplayFlightData();
 
-        
         async function displayFlightsWithJump() {
+            // Fetch flight data
             await fetchAndDisplayFlightData();
             const flightInfos = document.querySelectorAll('.flight-info');
-            
             let index = 0;
-        
-            function showNextFlight() {
-                flightInfos.forEach((flight, i) => {
-                    flight.classList.toggle("active", i === index);
-                });
-        
-                index = (index + 1) % flightInfos.length; // Loop back to the first flight
+
+            // Function to jump to the next flight info after a few seconds
+            function jumpToNextFlight() {
+                if (index < flightInfos.length) {
+                    // Make the current flight info visible
+                    flightInfos[index].style.display = 'block';
+                    // Hide the previous flight info
+                    if (index > 0) {
+                        flightInfos[index - 1].style.display = 'none';
+                    }
+                    index++;
+                } else {
+                    index = 0; // Reset to first flight info if at the end
+                }
             }
-        
-            if (flightInfos.length > 0) {
-                showNextFlight(); // Show the first flight immediately
-                setInterval(showNextFlight, 7000); // Rotate flights every 3 seconds
-            }
+
+            // Start the jump process with a delay (e.g., 3 seconds between each jump)
+            setInterval(jumpToNextFlight, 9000);
         }
 
         displayFlightsWithJump();
