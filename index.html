@@ -28,6 +28,7 @@
             justify-content: center;
             align-items: center;
             font-family: monospace;
+            overflow: hidden; /* Hides scrollbar */
         }
         
         .display-container {
@@ -36,7 +37,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly; /* Distribute space evenly */
+            justify-content: center; /* Distribute space evenly */
             padding: 2vh;
             box-sizing: border-box;
         }
@@ -48,6 +49,7 @@
             text-shadow: 0 0 1vw currentColor;
             font-weight: bold;
             width: 100%;
+            font-size: min(10vh, 10vw);
         }
 
         .alert {
@@ -67,11 +69,24 @@
         #aircraft { color: rgb(255, 223, 0); }
         #route { color: white; }
         #airline { color: rgb(255, 165, 0); }
+
+        /* Hide all flight info initially */
+         .flight-info {
+             display: none;
+         }
         
         /* Dynamic Font Sizing */
         .led-text {
             font-size: min(10vh, 10vw); /* Scale dynamically */
         }
+
+        /* Show only the active flight */
+         .flight-info.active {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+         }
     </style>
 </head>
 <body>
