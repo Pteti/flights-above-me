@@ -170,28 +170,23 @@
         }
 
         async function displayFlightsWithJump() {
-            // Fetch flight data
             await fetchAndDisplayFlightData();
             const flightInfos = document.querySelectorAll('.flight-info');
+            
             let index = 0;
-
-            // Function to jump to the next flight info after a few seconds
-            function jumpToNextFlight() {
-                if (index < flightInfos.length) {
-                    // Make the current flight info visible
-                    flightInfos[index].style.display = 'block';
-                    // Hide the previous flight info
-                    if (index > 0) {
-                        flightInfos[index - 1].style.display = 'none';
-                    }
-                    index++;
-                } else {
-                    index = 0; // Reset to first flight info if at the end
-                }
+        
+            function showNextFlight() {
+                flightInfos.forEach((flight, i) => {
+                    flight.classList.toggle("active", i === index);
+                });
+        
+                index = (index + 1) % flightInfos.length; // Loop back to the first flight
             }
-
-            // Start the jump process with a delay (e.g., 3 seconds between each jump)
-            setInterval(jumpToNextFlight, 9000);
+        
+            if (flightInfos.length > 0) {
+                showNextFlight(); // Show the first flight immediately
+                setInterval(showNextFlight, 3000); // Rotate flights every 3 seconds
+            }
         }
 
         displayFlightsWithJump();
