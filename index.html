@@ -190,6 +190,10 @@
                     const airlineName = data.airline?.name || 'Unknown Airline';
                     // Get the airline base color from the map
                     const airlineColor = airlineColors[airlineName] || 'rgb(255, 165, 0)'; // Default to orange if no color is found
+                    // Get the airline name
+                    const airlineName = data.airline?.name || 'Unknown Airline';
+                    const originCode = data.airport.origin?.code || 'Unknown Airport';
+                    const destinationCode = data.airport.destination?.code || 'Unknown Airport';
         
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
