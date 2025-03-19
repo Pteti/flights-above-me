@@ -243,6 +243,8 @@
         }
 
         displayFlightsWithJump();
+        // Call fetchAndDisplayFlightData every 10 seconds
+        setInterval(displayFlightsWithJump, 20000); // 20000 ms = 20 seconds
     </script>
 </body>
 </html>
