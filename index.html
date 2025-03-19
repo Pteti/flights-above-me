@@ -30,6 +30,24 @@
             font-family: monospace;
             overflow: hidden; /* Hides scrollbar */
         }
+
+        @font-face {
+            font-family: 'SkyFont';
+            src: url('/assets/Skyfont-NonCommercial.otf') format('truetype');
+        }
+
+        @keyframes flip {
+            0% {
+                transform: rotateX(90deg);
+            }
+            50% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(-90deg);
+            }
+            animation: flip 1.5s ease-in-out infinite; /* Customize duration and ease */
+        }
         
         .display-container {
             width: 100%;
@@ -43,6 +61,7 @@
         }
         
         .led-text {
+            font-family: 'SkyFont', monospace;
             text-align: center;
             white-space: nowrap;
             letter-spacing: 0.1em;
@@ -204,7 +223,7 @@
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
-                        <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.callsign || 'N/A'}</div>
+                        <div class="led-text flip" style="color: rgb(100, 149, 237)">${data.identification.callsign || 'N/A'}</div>
                         <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
                         <div class="led-text" style="color: white">${originCode.iata}-${destinationCode.iata}</div>
                         <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.text || 'N/A'}</div>
