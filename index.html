@@ -148,7 +148,9 @@
              
              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
              return R * c; // Distance in km
-         }
+        }
+
+        let activeFlights = new Set(); // To keep track of currently displayed planes
 
         async function fetchAndDisplayFlightData() {
             try {
@@ -168,6 +170,7 @@
                 const feedData = feedResponse.data;
                 
                 const flightKeys = Object.keys(feedData).filter(key => key !== 'full_count' && key !== 'version');
+                console.log(flightKeys);
                 if (!flightKeys.length) throw new Error('No flight data found');
                 
                 const displayContainer = document.querySelector('.display-container');
