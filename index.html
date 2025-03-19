@@ -206,6 +206,14 @@
                 console.error('Error fetching flight data:', error);
             }
         }
+
+        // 🕒 Automatically refresh every 10 seconds
+        setInterval(fetchAndDisplayFlightData, 10000);
+        
+        // Run immediately on page load
+        fetchAndDisplayFlightData();
+
+        
         async function displayFlightsWithJump() {
             await fetchAndDisplayFlightData();
             const flightInfos = document.querySelectorAll('.flight-info');
