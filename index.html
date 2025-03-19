@@ -188,12 +188,11 @@
                     const flightDiv = document.createElement('div');
                     flightDiv.classList.add('flight-info');
                     flightDiv.innerHTML = `
-                        <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.number.default || 'N/A'}</div>
-                        <div class="led-text" style="color: white">${data.airport.origin.code.iata}-${data.airport.destination.code.iata}</div>
-                        <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.code || 'N/A'}</div>
-                        <div class="led-text" style="color: orange">${airlineName}</div>
-                        ${isAboveYou ? `<div class="alert">✈️ Plane is right above you! 🚀</div>` : ""}
-                        <hr style="width: 80%; border: 0.5px solid gray">
+                        <div class="led-text" style="color: rgb(100, 149, 237)">${data.identification.callsign || 'N/A'}</div>
+                        <div class="led-text" style="color: ${airlineColor}">${airlineName}</div> <!-- Airline with dynamic color -->
+                        <div class="led-text" style="color: white">${originCode.iata}-${destinationCode.iata}</div>
+                        <div class="led-text" style="color: rgb(255, 223, 0)">${data.aircraft.model.text || 'N/A'}</div>
+                        ${isAboveYou ? `<div class="alert">✈️ Plane is right above! 🚀</div>` : ""}
                     `;
         
                     if (isAboveYou) {
